@@ -14,7 +14,7 @@
 
 > ✨ 一个由 Rust 和 Tokio 驱动的简单、安全、去中心化的异地组网方案
 
-比邻包含桌面与移动客户端、组网节点和 Web 控制台。项目基于 [EasyTier](https://github.com/EasyTier/EasyTier) 的开源代码独立维护。
+比邻包含桌面与移动客户端、组网节点和 Web 控制台。
 
 [比邻 Web 控制台，使用示例数据](assets/web-console-overview.png) · [网络成员](assets/web-console-members.png)
 

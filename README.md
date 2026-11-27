@@ -14,7 +14,7 @@
 
 > ✨ A simple, secure, decentralized virtual private network solution powered by Rust and Tokio
 
-Bilin includes desktop and mobile clients, networking nodes, and a web console. It is maintained independently and builds on the open-source [EasyTier](https://github.com/EasyTier/EasyTier) project.
+Bilin includes desktop and mobile clients, networking nodes, and a web console.
 
 [Bilin Web Console with example data](assets/web-console-overview.png) · [Network members](assets/web-console-members.png)
 
