@@ -377,10 +377,9 @@ Bilin commit and records their source commit and schema SHA-256. Host
 creation rejects an artifact/binding commit mismatch. Generation requires
 `protoc` 35.1 and `protoc-gen-go` 1.36.11 on `PATH`.
 
-The test-only socket probe is retained from
-[EasyTier commit 6a3d15f](https://github.com/EasyTier/EasyTier/tree/6a3d15f8758eed759d55401ff4ed7c47021b0819/tools/wasi-socket-poc/guest);
-its full commit and checksum are recorded in
-`testdata/wasi_socket_guest.source`. The Bilin fixture uses the new host import name and keeps the probe payloads from that revision.
+The source revision and checksum for the test-only socket probe are recorded
+in [the fixture metadata](testdata/wasi_socket_guest.source). The fixture uses
+Bilin's host import name and retains the probe payloads from that revision.
 
 Run all reactor, ABI conformance, lifecycle, and two-instance network tests
 with:

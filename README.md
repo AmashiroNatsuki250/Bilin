@@ -288,9 +288,6 @@ sudo bilin-core --network-name mysharednode --network-secret mysharednode
 
 ## License
 
-Bilin is derived from [EasyTier](https://github.com/EasyTier/EasyTier).
-
-
 Bilin is released under the [LGPL-3.0](LICENSE).
 
 ## Responsible Use

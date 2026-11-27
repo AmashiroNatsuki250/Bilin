@@ -80,10 +80,9 @@ connect API、调用方超时和业务测试的 5 秒 socket 超时。
 声明必须对应实际测试的 Bilin 版本及其锁定依赖，不能扩展为所有
 未检查的历史版本或第三方修改版本都已验证。
 
-实现基线源码：
-[报文定义](https://github.com/EasyTier/kcp-sys/blob/b37ee660fb70bb6d816fb8bbc08b140e55e7218b/src/packet_def.rs)、
-[状态机](https://github.com/EasyTier/kcp-sys/blob/b37ee660fb70bb6d816fb8bbc08b140e55e7218b/src/state.rs)、
-[端点](https://github.com/EasyTier/kcp-sys/blob/b37ee660fb70bb6d816fb8bbc08b140e55e7218b/src/endpoint.rs)。
+实现基线是 kcp-sys 的 `b37ee660fb70bb6d816fb8bbc08b140e55e7218b`
+提交中的 `src/packet_def.rs`、`src/state.rs` 和 `src/endpoint.rs`。
+当前版本的实现见 [vendor/kcp-sys](../vendor/kcp-sys)。
 
 ## 4. 报文格式与连接内协商
 

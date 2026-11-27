@@ -286,9 +286,7 @@ sudo bilin-core --network-name mysharednode --network-secret mysharednode
 
 ## 许可证
 
-比邻基于 [EasyTier](https://github.com/EasyTier/EasyTier) 开发。
-
-比邻 在 [LGPL-3.0](LICENSE) 许可下发布。
+比邻以 [LGPL-3.0](LICENSE) 许可发布。
 
 ## 使用规范
 

@@ -1,7 +1,7 @@
 # Android application management foundation
 
-This is the first stage of [#2538](https://github.com/EasyTier/EasyTier/issues/2538),
-not the headless lifecycle controller itself.
+This document describes the shared configuration and storage layer for the
+Android client.
 
 ## Ownership
 
