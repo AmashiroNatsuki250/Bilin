@@ -1,0 +1,15 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-ui-main",
+  "description": "Open and position auxiliary desktop UI windows from the local main window",
+  "local": true,
+  "platforms": ["windows", "macOS"],
+  "windows": ["main"],
+  "permissions": [
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-set-position",
+    "core:window:allow-set-size",
+    "core:window:allow-unminimize",
+    "core:window:allow-destroy"
+  ]
+}

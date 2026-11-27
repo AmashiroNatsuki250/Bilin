@@ -1,0 +1,243 @@
+name: Bilin Installers
+
+on:
+  push:
+    tags: ['v[0-9]*']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a Release for the selected version tag
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bilin-installers-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  metadata:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Validate the application version
+        id: version
+        env:
+          PUBLISH: ${{ github.event_name == 'push' || inputs.publish }}
+        run: |
+          set -euo pipefail
+          version=$(node -p 'require("./bilin-gui/src-tauri/tauri.conf.json").version')
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if [[ "$PUBLISH" == true && ( "$GITHUB_REF_TYPE" != tag || "$GITHUB_REF_NAME" != "v$version" ) ]]; then
+            printf 'Select a release tag matching the application version (v%s).\n' "$version" >&2
+            exit 1
+          fi
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+
+  desktop:
+    name: ${{ matrix.platform }} ${{ matrix.arch }}
+    needs: metadata
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { platform: Windows, arch: x64, runner: windows-2022, target: x86_64-pc-windows-msvc, driver: x86_64, bundle: nsis, extension: exe }
+          - { platform: Windows, arch: x86, runner: windows-2022, target: i686-pc-windows-msvc, driver: i686, bundle: nsis, extension: exe }
+          - { platform: Windows, arch: ARM64, runner: windows-11-arm, target: aarch64-pc-windows-msvc, driver: arm64, bundle: nsis, extension: exe }
+          - { platform: macOS, arch: Intel, runner: macos-15-intel, target: x86_64-apple-darwin, bundle: dmg, extension: dmg }
+          - { platform: macOS, arch: Apple-Silicon, runner: macos-15, target: aarch64-apple-darwin, bundle: dmg, extension: dmg }
+          - { platform: Linux, arch: x64, runner: ubuntu-24.04, target: x86_64-unknown-linux-gnu, bundle: deb, extension: deb }
+          - { platform: Linux, arch: ARM64, runner: ubuntu-24.04-arm, target: aarch64-unknown-linux-gnu, bundle: deb, extension: deb }
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/prepare-build
+        with:
+          target: ${{ matrix.target }}
+          gui: true
+          pnpm: true
+          pnpm-build-filter: bilin-gui...
+          token: ${{ github.token }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: installers-${{ matrix.target }}
+      - name: Prepare Windows runtime drivers
+        if: runner.os == 'Windows'
+        shell: bash
+        env:
+          DRIVER_ARCH: ${{ matrix.driver }}
+        run: |
+          set -euo pipefail
+          directory="bilin/third_party/$DRIVER_ARCH"
+          cp "$directory/wintun.dll" bilin-gui/src-tauri/
+          if [[ "$DRIVER_ARCH" != arm64 ]]; then
+            cp "$directory"/*.sys bilin-gui/src-tauri/
+          fi
+      - name: Build installer
+        shell: bash
+        working-directory: bilin-gui
+        env:
+          TARGET: ${{ matrix.target }}
+          BUNDLE: ${{ matrix.bundle }}
+          BILIN_DEFAULT_CONTROLLER_URL: ${{ vars.BILIN_DEFAULT_CONTROLLER_URL }}
+          BILIN_STUN_SERVERS: ${{ vars.BILIN_STUN_SERVERS }}
+          BILIN_STUN_UDP_FALLBACK: ${{ vars.BILIN_STUN_UDP_FALLBACK }}
+        run: |
+          set -euo pipefail
+          for variable in BILIN_DEFAULT_CONTROLLER_URL BILIN_STUN_SERVERS BILIN_STUN_UDP_FALLBACK; do
+            if [[ -z "${!variable}" ]]; then unset "$variable"; fi
+          done
+          config='{"build":{"beforeBuildCommand":null}}'
+          if [[ "$RUNNER_OS" == macOS ]]; then
+            export APPLE_SIGNING_IDENTITY=-
+            export MACOSX_DEPLOYMENT_TARGET=12.0
+            config='{"build":{"beforeBuildCommand":null},"bundle":{"macOS":{"minimumSystemVersion":"12.0"}}}'
+          elif [[ "$TARGET" == aarch64-pc-windows-msvc ]]; then
+            config='{"build":{"beforeBuildCommand":null},"bundle":{"resources":["./wintun.dll","../../bilin/third_party/Wintun-LICENSE.txt"]}}'
+          fi
+          pnpm exec tauri build --target "$TARGET" --bundles "$BUNDLE" --config "$config" -- --locked
+      - name: Collect installer
+        shell: bash
+        env:
+          VERSION: ${{ needs.metadata.outputs.version }}
+          TARGET: ${{ matrix.target }}
+          BUNDLE: ${{ matrix.bundle }}
+          EXTENSION: ${{ matrix.extension }}
+          PLATFORM: ${{ matrix.platform }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          source=$(find "target/$TARGET/release/bundle/$BUNDLE" -maxdepth 1 -type f -name "*.$EXTENSION" -print -quit)
+          test -n "$source"
+          cp "$source" "release-assets/Bilin-$VERSION-$PLATFORM-$ARCH.$EXTENSION"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: Bilin-${{ matrix.platform }}-${{ matrix.arch }}
+          path: release-assets/*
+          if-no-files-found: error
+
+  android:
+    name: Android ${{ matrix.arch }}
+    needs: metadata
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: arm64-v8a, tauri: aarch64, target: aarch64-linux-android }
+          - { arch: armeabi-v7a, tauri: armv7, target: armv7-linux-androideabi }
+          - { arch: x86, tauri: i686, target: i686-linux-android }
+          - { arch: x86_64, tauri: x86_64, target: x86_64-linux-android }
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '11076708'
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0 ndk;26.0.10792818'
+      - name: Configure the Android NDK
+        run: printf 'NDK_HOME=%s/ndk/26.0.10792818\n' "$ANDROID_HOME" >> "$GITHUB_ENV"
+      - uses: ./.github/actions/prepare-build
+        with:
+          target: ${{ matrix.target }}
+          gui: false
+          pnpm: true
+          pnpm-build-filter: bilin-gui...
+          token: ${{ github.token }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: installers-${{ matrix.target }}
+      - name: Build and verify the signed APK
+        working-directory: bilin-gui
+        env:
+          VERSION: ${{ needs.metadata.outputs.version }}
+          ARCH: ${{ matrix.arch }}
+          TAURI_TARGET: ${{ matrix.tauri }}
+          BILIN_DEFAULT_CONTROLLER_URL: ${{ vars.BILIN_DEFAULT_CONTROLLER_URL }}
+          BILIN_STUN_SERVERS: ${{ vars.BILIN_STUN_SERVERS }}
+          BILIN_STUN_UDP_FALLBACK: ${{ vars.BILIN_STUN_UDP_FALLBACK }}
+          KEYSTORE_BASE64: ${{ secrets.BILIN_ANDROID_KEYSTORE_BASE64 }}
+          BILIN_ANDROID_KEY_ALIAS: ${{ secrets.BILIN_ANDROID_KEY_ALIAS }}
+          BILIN_ANDROID_KEY_PASSWORD: ${{ secrets.BILIN_ANDROID_KEY_PASSWORD }}
+          BILIN_ANDROID_STORE_PASSWORD: ${{ secrets.BILIN_ANDROID_STORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for variable in BILIN_DEFAULT_CONTROLLER_URL BILIN_STUN_SERVERS BILIN_STUN_UDP_FALLBACK; do
+            if [[ -z "${!variable}" ]]; then unset "$variable"; fi
+          done
+          suffix=-preview
+          if [[ -n "$KEYSTORE_BASE64$BILIN_ANDROID_KEY_ALIAS$BILIN_ANDROID_KEY_PASSWORD$BILIN_ANDROID_STORE_PASSWORD" ]]; then
+            : "${KEYSTORE_BASE64:?Missing Android signing keystore}"
+            : "${BILIN_ANDROID_KEY_ALIAS:?Missing Android signing alias}"
+            : "${BILIN_ANDROID_KEY_PASSWORD:?Missing Android signing key password}"
+            : "${BILIN_ANDROID_STORE_PASSWORD:?Missing Android signing store password}"
+            umask 077
+            export BILIN_ANDROID_KEYSTORE="$RUNNER_TEMP/bilin-android.keystore"
+            trap 'rm -f -- "$BILIN_ANDROID_KEYSTORE"' EXIT
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$BILIN_ANDROID_KEYSTORE"
+            unset KEYSTORE_BASE64
+            suffix=
+          else
+            export BILIN_ANDROID_SIGN_PREVIEW=true
+          fi
+          pnpm exec tauri android build --apk --target "$TAURI_TARGET" --split-per-abi \
+            --config '{"build":{"beforeBuildCommand":null}}' -- --locked
+          mapfile -t packages < <(find src-tauri/gen/android/app/build/outputs/apk -type f -name '*.apk')
+          test "${#packages[@]}" -eq 1
+          tools="$ANDROID_HOME/build-tools/34.0.0"
+          "$tools/apksigner" verify "${packages[0]}"
+          package_id=io.github.amashironatsuki250.bilin
+          if [[ -n "$suffix" ]]; then package_id+=.preview; fi
+          manifest=$("$tools/aapt" dump badging "${packages[0]}")
+          grep -F "package: name='$package_id'" <<< "$manifest"
+          grep -F "native-code: '$ARCH'" <<< "$manifest"
+          mkdir -p ../release-assets
+          cp "${packages[0]}" "../release-assets/Bilin-$VERSION-Android-$ARCH$suffix.apk"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: Bilin-Android-${{ matrix.arch }}
+          path: release-assets/*
+          if-no-files-found: error
+
+  release:
+    needs: [metadata, desktop, android]
+    if: github.event_name == 'push' || inputs.publish
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: Bilin-*
+          path: release-assets
+          merge-multiple: true
+      - name: Verify and publish all installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          cd release-assets
+          shopt -s nullglob
+          packages=(*.exe *.dmg *.deb *.apk)
+          test "${#packages[@]}" -eq 11
+          sha256sum "${packages[@]}" > SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" "${packages[@]}" SHA256SUMS \
+            --verify-tag --generate-notes --title "Bilin $GITHUB_REF_NAME"

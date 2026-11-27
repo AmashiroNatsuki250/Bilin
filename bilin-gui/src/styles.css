@@ -1,0 +1,218 @@
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+:root {
+  --desk-mono: "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1b1b1b;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+html, body, #app { height: 100%; margin: 0; }
+body { overflow: hidden; background: #f6f6f6; }
+
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid #646464;
+  outline-offset: 3px;
+}
+
+.client-shell {
+  display: grid;
+  grid-template-columns: 216px minmax(0, 1fr);
+  height: 100dvh;
+  background: #f5f5f5;
+}
+
+.client-rail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #171717;
+  color: #f4f4f4;
+  padding: 23px 15px 15px;
+}
+
+.client-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 3px 9px 25px;
+}
+
+.client-mark {
+  width: 39px;
+  height: 39px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #f3f3f3;
+  color: #161616;
+  font-size: 21px;
+}
+
+.client-brand strong { display: block; font-size: 20px; font-weight: 700; line-height: 1.25; letter-spacing: .08em; }
+.client-brand small { display: block; margin-top: 3px; font-size: 11px; color: #a6a6a6; }
+.client-navigation { display: grid; gap: 4px; }
+.client-navigation button, .client-quit {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 42px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  text-align: left;
+  font-size: 13px;
+  color: #cbcbcb;
+}
+
+.client-navigation button > i, .client-quit > i { width: 17px; flex: 0 0 17px; font-size: 15px; }
+.client-navigation button:hover, .client-quit:hover { background: #252525; color: #fff; }
+.client-navigation button.active { background: #333; border-color: #454545; color: #fff; font-weight: 620; }
+.client-rail button:focus-visible { outline-color: #eee; outline-offset: 2px; }
+
+.client-rail-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #363636;
+}
+.client-rail-status { display: flex; gap: 9px; align-items: flex-start; padding: 2px 10px 12px; font-size: 12px; }
+.client-rail-status small { display: block; color: #aaa; font-size: 11px; margin-top: 3px; overflow-wrap: anywhere; }
+.client-status-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 50%;
+  border: 1px solid #adadad;
+  flex: 0 0 auto;
+}
+.client-status-dot.connected { border-color: #f6f6f6; background: #f6f6f6; box-shadow: 0 0 0 3px #545454; }
+
+.client-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.client-heading {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 20px 28px 18px;
+  background: #fbfbfb;
+  border-bottom: 1px solid #e2e2e2;
+}
+.client-heading h1 { margin: 0; font-size: clamp(21px, 3vw, 28px); font-weight: 680; line-height: 1.25; }
+.client-subnet-proxy { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 560; white-space: nowrap; }
+.client-body { flex: 1; min-height: 0; overflow: auto; padding: 22px 28px 28px; scrollbar-gutter: stable; }
+.client-body > div { max-width: 1460px; margin-inline: auto; }
+.client-preferences { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 18px; }
+
+.client-panel, .client-empty {
+  min-width: 0;
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  background: #fff;
+}
+.client-panel { padding: 20px; }
+.client-panel header { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+.client-panel h2, .client-empty h2 { margin: 0; font-size: 16px; font-weight: 650; }
+.client-section-icon {
+  display: grid;
+  place-items: center;
+  color: #424242;
+  background: #f1f1f1;
+  border-radius: 9px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+}
+.client-empty { display: grid; place-items: center; align-content: center; gap: 13px; min-height: 290px; padding: 20px; }
+.client-empty .client-section-icon { width: 47px; height: 47px; font-size: 20px; }
+.client-muted { color: #5e5e5e; font-size: 12px; margin: 0; }
+.client-panel-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+.client-device-login { display: grid; gap: 8px; margin-top: 15px; }
+.client-device-login-url { min-width: 0; width: 100%; font-family: var(--desk-mono); }
+.client-device-login-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.client-setting-list { margin: 0; }
+.client-setting-list > div, .client-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ececec;
+  font-size: 13px;
+}
+.client-setting-list dt, .client-setting-row label { color: #565656; flex: 0 0 auto; }
+.client-setting-list dd { margin: 0; text-align: right; overflow-wrap: anywhere; font-weight: 560; }
+.client-setting-list code { font-family: var(--desk-mono); font-weight: 500; }
+.client-setting-row { padding-top: 0; }
+.client-setting-row .p-select { min-width: 105px; }
+.client-secret { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; background: #f5f5f5; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+.client-secret > div { display: grid; gap: 3px; min-width: 0; }
+.client-secret span { color: #5b5b5b; font-size: 12px; }
+.client-secret code { font-family: var(--desk-mono); color: #1d1d1d; font-size: 19px; font-weight: 620; overflow-wrap: anywhere; user-select: all; }
+
+.client-dialog { width: min(530px, calc(100vw - 28px)); }
+.client-dialog-field { display: grid; gap: 10px; }
+.client-dialog-field .p-inputtext { width: 100%; }
+
+.p-button { min-height: 34px; }
+.p-message, .p-toast-message, .p-tag, .p-badge, .p-button-danger, .p-button-warn, .p-button-info, .p-button-help, .p-button-success {
+  filter: grayscale(1);
+}
+.p-select-overlay { max-width: calc(100% - 24px); }
+.p-password, .p-password > input { width: 100%; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #acacac; border: 2px solid transparent; border-radius: 5px; background-clip: content-box; }
+
+@media (max-width: 980px) {
+  .client-shell { grid-template-columns: 177px minmax(0, 1fr); }
+  .client-heading { padding-inline: 20px; }
+  .client-body { padding-inline: 20px; }
+}
+
+@media (max-width: 820px) {
+  .client-preferences { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .client-shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .client-rail { padding: 10px 10px 0; }
+  .client-brand { padding: 0 2px 8px; gap: 8px; }
+  .client-mark { width: 28px; height: 28px; border-radius: 6px; font-size: 15px; }
+  .client-brand strong { font-size: 15px; }
+  .client-brand small { display: none; }
+  .client-navigation { display: flex; gap: 4px; overflow: auto; padding-bottom: 7px; }
+  .client-navigation button { width: auto; min-height: 37px; flex: 1 0 auto; justify-content: center; white-space: nowrap; padding: 5px 7px; gap: 5px; font-size: 11px; }
+  .client-navigation button > i { flex: 0 0 12px; width: 12px; font-size: 12px; }
+  .client-rail-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 0; gap: 8px; }
+  .client-rail-status { padding: 5px 3px; align-items: center; }
+  .client-rail-status > div { display: flex; flex-wrap: wrap; gap: 2px 6px; align-items: center; }
+  .client-rail-status > div > span { display: none; }
+  .client-rail-status small, .client-status-dot { margin-top: 0; }
+  .client-quit { width: auto; min-height: 30px; margin-left: auto; padding: 3px 7px; font-size: 11px; }
+  .client-heading { padding: 12px 14px; }
+  .client-body { padding: 13px 12px 16px; scrollbar-gutter: auto; }
+  .client-panel { padding: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

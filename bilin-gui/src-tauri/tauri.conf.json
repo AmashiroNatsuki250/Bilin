@@ -1,0 +1,46 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "createUpdaterArtifacts": false,
+    "linux": {
+      "deb": {
+        "depends": [
+          "pkexec | policykit-1"
+        ]
+      }
+    }
+  },
+  "productName": "Bilin",
+  "mainBinaryName": "bilin-gui",
+  "version": "2.7.1",
+  "identifier": "io.github.amashironatsuki250.bilin",
+  "plugins": {
+    "shell": {
+      "open": "^.+"
+    }
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "比邻",
+        "width": 1152,
+        "height": 740
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

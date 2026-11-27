@@ -1,0 +1,6 @@
+repository=https://github.com/EasyTier/EasyTier
+commit=6a3d15f8758eed759d55401ff4ed7c47021b0819
+path=tools/wasi-socket-poc/guest
+original_sha256=b672ae94eb31219b49b9c7cbe974ace81bb28effefae1cabde1c8abd68c01959
+adaptation=rename 30 import-module strings in the WebAssembly import section to bilin_host
+sha256=8a5df5827d938b8eb98b49f5078c2a1255da8815346be5d22dec06e1c8cace83

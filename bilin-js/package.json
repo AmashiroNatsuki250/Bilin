@@ -1,0 +1,11 @@
+{
+  "name": "@bilin/js-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @bilin/browser build && pnpm --filter @bilin/cloudflare build",
+    "test": "pnpm build && pnpm test:unit",
+    "test:unit": "pnpm --filter @bilin/runtime test && pnpm --filter @bilin/browser exec vitest run && pnpm --filter @bilin/cloudflare exec vitest run",
+    "check": "pnpm build && pnpm test:unit && pnpm --filter @bilin/web-example check"
+  }
+}

@@ -1,0 +1,4 @@
+<resources>
+    <string name="bilin_vpn_service_name">比邻P2P专线</string>
+    <string name="bilin_vpn_connected">专线已连接</string>
+</resources>

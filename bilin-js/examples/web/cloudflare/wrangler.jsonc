@@ -1,0 +1,38 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "bilin-web-example",
+  "main": "worker.ts",
+  "compatibility_date": "2026-07-29",
+  "compatibility_flags": ["nodejs_compat"],
+  "rules": [
+    {
+      "type": "CompiledWasm",
+      "globs": ["**/*.wasm"],
+      "fallthrough": true
+    }
+  ],
+  "vars": {
+    "BILIN_NETWORK_NAME": "bilin-web-example"
+  },
+  "secrets": {
+    "required": ["BILIN_NETWORK_SECRET"]
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "BILIN_CORE",
+        "class_name": "BilinCoreObject"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["BilinCoreObject"]
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

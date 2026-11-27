@@ -1,0 +1,14 @@
+{
+    "app": {
+        "windows": [
+            {
+                "title": "比邻",
+                "width": 840,
+                "height": 448,
+                "minWidth": 510,
+                "minHeight": 425,
+                "center": true
+            }
+        ]
+    }
+}

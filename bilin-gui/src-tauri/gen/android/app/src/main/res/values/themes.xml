@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.bilin_gui" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimaryDark">@color/android_status_bar</item>
+        <item name="android:statusBarColor">@color/android_status_bar</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

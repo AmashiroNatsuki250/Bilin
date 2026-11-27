@@ -1,0 +1,6 @@
+{
+    global:
+        Java_io_github_amashironatsuki250_bilin_jni_BilinJNI_*;
+    local:
+        *;
+};

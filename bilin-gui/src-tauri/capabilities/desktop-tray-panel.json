@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-tray-panel",
+  "description": "Receive presentation state and send actions from the local desktop tray panel",
+  "local": true,
+  "platforms": ["windows", "macOS"],
+  "windows": ["desktop-tray"],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:event:allow-emit-to"
+  ]
+}

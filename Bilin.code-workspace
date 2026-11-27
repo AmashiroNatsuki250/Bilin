@@ -1,0 +1,57 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "core",
+			"path": "bilin"
+		},
+		{
+			"name": "gui",
+			"path": "bilin-gui"
+		},
+		{
+			"name": "web",
+			"path": "bilin-web"
+		},
+		{
+			"name": "ffi",
+			"path": "bilin-contrib/bilin-ffi"
+		},
+		{
+			"name": "magisk",
+			"path": "bilin-contrib/bilin-magisk"
+		},
+		{
+			"name": "openharmony",
+			"path": "bilin-contrib/bilin-ohrs"
+		},
+		{
+			"name": "uptime",
+			"path": "bilin-contrib/bilin-uptime"
+		},
+		{
+			"name": "vpnservice",
+			"path": "tauri-plugin-vpnservice"
+		},
+		{
+			"name": "rpc-build",
+			"path": "bilin-rpc-build"
+		}
+	],
+	"settings": {
+		"i18n-ally.sourceLanguage": "cn",
+		"i18n-ally.keystyle": "nested",
+		"i18n-ally.sortKeys": true,
+		// Disable the default formatter
+		"prettier.enable": false,
+		"editor.formatOnSave": true,
+		"editor.formatOnSaveMode": "modifications",
+		"editor.formatOnPaste": false,
+		"editor.formatOnType": true,
+		"[nix]": {
+			"editor.formatOnSave": false,
+		},
+	}
+}

@@ -1,0 +1,7 @@
+id=bilin_magisk
+name=Bilin_Magisk
+version=v2.7.1
+versionCode=1
+author=Bilin
+description=bilin magisk module @Bilin(https://github.com/AmashiroNatsuki250/Bilin)
+updateJson=https://raw.githubusercontent.com/AmashiroNatsuki250/Bilin/refs/heads/main/bilin-contrib/bilin-magisk/magisk_update.json

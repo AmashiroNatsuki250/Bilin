@@ -1,0 +1,30 @@
+{
+    "app": {
+        "windows": [
+            {
+                "title": "比邻",
+                "width": 840,
+                "height": 448,
+                "minWidth": 510,
+                "minHeight": 425,
+                "center": true
+            }
+        ]
+    },
+    "bundle": {
+        "externalBin": [],
+        "resources": [
+            "./wintun.dll",
+            "./*.sys",
+            "../../bilin/third_party/Wintun-LICENSE.txt"
+        ],
+        "windows": {
+            "nsis": {
+                "installerHooks": "./windows/installer-hooks.nsh"
+            },
+            "webviewInstallMode": {
+                "type": "embedBootstrapper"
+            }
+        }
+    }
+}

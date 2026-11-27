@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "wasi-relay",
+  "main": "example/worker.ts",
+  "compatibility_date": "2026-07-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "rules": [
+    {
+      "type": "CompiledWasm",
+      "globs": ["**/*.wasm"],
+      "fallthrough": true
+    }
+  ],
+  "vars": {
+    "BILIN_OBJECT_NAME": "primary",
+    "BILIN_NETWORK_NAME": "cf-wasi",
+    "BILIN_NETWORK_SECRET": "cf-wasi-test",
+    "BILIN_ENABLE_ENCRYPTION": "false"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "BILIN_CORE",
+        "class_name": "BilinCoreObject"
+      }
+    ]
+  },
+  "exports": {
+    "BilinCoreObject": {
+      "type": "durable-object",
+      "storage": "sqlite"
+    }
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
