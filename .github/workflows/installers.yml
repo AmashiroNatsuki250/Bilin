@@ -19,6 +19,9 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
+  # Match local distribution builds and keep linker memory within hosted runner limits.
+  CARGO_PROFILE_RELEASE_LTO: 'false'
+  CARGO_PROFILE_RELEASE_CODEGEN_UNITS: '16'
 
 jobs:
   metadata:
@@ -153,7 +156,15 @@ jobs:
           cmdline-tools-version: '11076708'
           packages: 'platform-tools platforms;android-34 build-tools;34.0.0 ndk;26.0.10792818'
       - name: Configure the Android NDK
-        run: printf 'NDK_HOME=%s/ndk/26.0.10792818\n' "$ANDROID_HOME" >> "$GITHUB_ENV"
+        env:
+          RUST_TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          ndk="$ANDROID_HOME/ndk/26.0.10792818"
+          sysroot="$ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+          test -d "$sysroot/usr/include"
+          printf 'NDK_HOME=%s\nBINDGEN_EXTRA_CLANG_ARGS_%s=--sysroot=%s\n' \
+            "$ndk" "${RUST_TARGET//-/_}" "$sysroot" >> "$GITHUB_ENV"
       - uses: ./.github/actions/prepare-build
         with:
           target: ${{ matrix.target }}
