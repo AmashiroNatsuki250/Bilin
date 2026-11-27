@@ -151,6 +151,17 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
+          cache-dependency-path: |
+            .github/scripts/android-ci-repositories.gradle
+            bilin-gui/src-tauri/gen/android/**/*.gradle*
+            bilin-gui/src-tauri/gen/android/gradle/wrapper/gradle-wrapper.properties
+      - name: Configure the CI Gradle repositories
+        run: |
+          set -euo pipefail
+          gradle_init="${GRADLE_USER_HOME:-$HOME/.gradle}/init.d"
+          mkdir -p "$gradle_init"
+          cp .github/scripts/android-ci-repositories.gradle "$gradle_init/bilin-ci-repositories.gradle"
       - uses: android-actions/setup-android@v3
         with:
           cmdline-tools-version: '11076708'

@@ -1,0 +1,20 @@
+// Hosted runners can be rate-limited by Maven Central, including via the Plugin Portal.
+def addMavenCentralMirror = { repositories ->
+    repositories.maven {
+        name = 'GoogleMavenCentralMirror'
+        url = 'https://maven-central.storage-download.googleapis.com/maven2/'
+    }
+}
+
+gradle.beforeSettings { settings ->
+    def repositories = settings.pluginManagement.repositories
+    addMavenCentralMirror(repositories)
+    repositories.gradlePluginPortal()
+}
+
+gradle.projectsLoaded { build ->
+    build.rootProject.allprojects { project ->
+        addMavenCentralMirror(project.buildscript.repositories)
+        addMavenCentralMirror(project.repositories)
+    }
+}
